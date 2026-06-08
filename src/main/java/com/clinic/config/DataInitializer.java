@@ -25,20 +25,23 @@ public class DataInitializer implements CommandLineRunner {
             admin.setUsername("admin");
             admin.setPassword("admin123");
             admin.setRole("ADMIN");
+            admin.setEmail("admin@clinic.com");
+
             userRepository.save(admin);
             System.out.println("✅ Admin created → admin / admin123");
         }
 
-        // Seed Patient
+// Seed Patient
         if (userRepository.findByUsername("patient").isEmpty()) {
             User patient = new User();
             patient.setUsername("patient");
             patient.setPassword("patient123");
             patient.setRole("PATIENT");
+            patient.setEmail("patient@clinic.com");
+
             userRepository.save(patient);
             System.out.println("✅ Patient created → patient / patient123");
         }
-
         // Seed Doctors
         if (doctorRepository.count() == 0) {
             seedDoctor("Dr. Sharma",   "General");
