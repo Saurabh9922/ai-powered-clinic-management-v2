@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Doctors – Clinic</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #f0f4f8; min-height: 100vh; }
+        .card { border: none; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .table th { background-color: #f8f9fa; font-weight: 600; border-top: none; }
+        .badge-spec { font-size: 0.78rem; padding: 6px 12px; border-radius: 20px; }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a th:href="@{/admin/dashboard}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi bi-arrow-left me-1"></i>Dashboard
+            </a>
+            <a th:href="@{/admin/add-doctor}" class="btn btn-danger btn-sm">
+                <i class="bi bi-plus-circle me-1"></i>Add Doctor
+            </a>
+        </div>
+        <h4 class="fw-bold mb-0">All Doctors</h4>
+    </div>
+
+    <!-- Alerts -->
+    <div th:if="${param.added}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>Doctor added successfully!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${param.deleted}" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <i class="bi bi-trash me-2"></i>Doctor deleted successfully.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                    <tr>
+                        <th class="ps-4">#</th>
+                        <th>Name</th>
+                        <th>Specialization</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="doc : ${doctors}">
+                        <td class="ps-4 text-muted" th:text="${doc.id}"></td>
+                        <td class="fw-semibold">
+                            <i class="bi bi-person-circle text-primary me-2"></i>
+                            <span th:text="${doc.name}"></span>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary bg-opacity-10 text-primary badge-spec"
+                                  th:text="${doc.specialization}"></span>
+                        </td>
+                        <td class="text-center">
+                            <a th:href="@{/admin/delete-doctor/{id}(id=${doc.id})}"
+                               class="btn btn-outline-danger btn-sm"
+                               onclick="return confirm('Delete this doctor and all their slots?')">
+                                <i class="bi bi-trash me-1"></i>Delete
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${doctors.isEmpty()}">
+                        <td colspan="4" class="text-center text-muted py-5">
+                            <i class="bi bi-person-slash fs-1 d-block mb-2"></i>
+                            No doctors registered yet.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

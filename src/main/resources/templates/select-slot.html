@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Slot – Clinic</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #f0f4f8; min-height: 100vh; }
+        .card { border: none; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .slot-wrapper { margin-bottom: 8px; }
+        .slot-label {
+            display: flex; align-items: center; gap: 10px;
+            border: 2px solid #e9ecef; border-radius: 10px; padding: 10px 14px;
+            cursor: pointer; transition: all .2s; margin-bottom: 0; width: 100%;
+        }
+        .slot-label:hover { border-color: #1a73e8; background: #e8f0fe; }
+        input[type=radio]:checked + .slot-label { border-color: #1a73e8; background: #e8f0fe; font-weight: 600; }
+        .slot-booked .slot-label { opacity: .5; cursor: not-allowed; background: #f8f9fa !important; border-color: #dee2e6 !important; }
+        .step-badge { background: #1a73e8; color: white; border-radius: 50%; width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem; font-weight:700; }
+        .form-control:focus { border-color: #1a73e8; box-shadow: 0 0 0 0.2rem rgba(26,115,232,.25); }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+
+    <div class="mb-3">
+        <a th:href="@{/book}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Back to Doctors
+        </a>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <span class="text-muted">1. Select Doctor</span>
+        <span class="text-muted mx-1">→</span>
+        <span class="step-badge">2</span>
+        <span class="fw-semibold text-primary">Pick Slot</span>
+        <span class="text-muted mx-1">→</span>
+        <span class="text-muted">3. Confirm</span>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Doctor Info Card -->
+        <div class="col-md-4">
+            <div class="card p-4 text-center">
+                <div style="width:70px;height:70px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                    <i class="bi bi-person-fill text-primary" style="font-size:2rem;"></i>
+                </div>
+                <h5 class="fw-bold" th:text="${doctor.name}">Doctor</h5>
+                <span class="badge bg-primary bg-opacity-10 text-primary"
+                      style="font-size:.82rem;padding:6px 14px;border-radius:20px;"
+                      th:text="${doctor.specialization}"></span>
+                <hr>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-clock me-1"></i>Slots: 9:00 AM – 5:00 PM (30 min each)
+                </p>
+            </div>
+        </div>
+
+        <!-- Booking Form -->
+        <div class="col-md-8">
+            <div class="card p-4">
+
+                <div th:if="${param.error}" class="alert alert-danger mb-3">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Please select a time slot and pick a date.
+                </div>
+                <div th:if="${param.slotTaken}" class="alert alert-warning mb-3">
+                    <i class="bi bi-clock-history me-2"></i>That slot was just booked. Please pick another.
+                </div>
+
+                <form th:action="@{/book-appointment}" method="post">
+                    <input type="hidden" name="doctorId" th:value="${doctor.id}">
+
+                    <!-- Date picker — min set via JavaScript to avoid Thymeleaf temporals dependency -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-calendar3 me-2 text-primary"></i>Select Appointment Date
+                        </label>
+                        <input type="date" id="dateInput" name="date" class="form-control" required>
+                    </div>
+
+                    <!-- Time Slots -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-clock me-2 text-primary"></i>Select Time Slot
+                        </label>
+
+                        <div th:if="${slots == null or slots.isEmpty()}" class="alert alert-warning">
+                            <i class="bi bi-calendar-x me-2"></i>
+                            No available slots for this doctor. All slots may be booked.
+                        </div>
+
+                        <div class="row g-2" th:unless="${slots == null or slots.isEmpty()}">
+                            <div class="col-md-6 slot-wrapper" th:each="slot : ${slots}"
+                                 th:classappend="${slot.booked} ? 'slot-booked' : ''">
+                                <input type="radio"
+                                       name="slotId"
+                                       th:value="${slot.id}"
+                                       th:id="'slot_' + ${slot.id}"
+                                       th:disabled="${slot.booked}"
+                                       class="d-none">
+                                <label th:for="'slot_' + ${slot.id}" class="slot-label">
+                                    <i class="bi bi-clock text-primary"></i>
+                                    <span th:text="${slot.startTime} + ' – ' + ${slot.endTime}"></span>
+                                    <span th:if="${slot.booked}"
+                                          class="ms-auto badge bg-danger bg-opacity-10 text-danger"
+                                          style="font-size:.75rem;">Booked</span>
+                                    <span th:unless="${slot.booked}"
+                                          class="ms-auto badge bg-success bg-opacity-10 text-success"
+                                          style="font-size:.75rem;">Free</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid" th:unless="${slots == null or slots.isEmpty()}">
+                        <button type="submit" class="btn btn-primary btn-lg fw-semibold">
+                            <i class="bi bi-calendar-check me-2"></i>Confirm Booking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Set today as the minimum selectable date (no Thymeleaf temporals needed)
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('dateInput').setAttribute('min', today);
+
+    // Make entire slot-label div clickable (click label triggers radio)
+    document.querySelectorAll('.slot-label').forEach(label => {
+        label.addEventListener('click', function() {
+            const input = document.getElementById(this.getAttribute('for'));
+            if (input && !input.disabled) {
+                input.checked = true;
+            }
+        });
+    });
+</script>
+</body>
+</html>

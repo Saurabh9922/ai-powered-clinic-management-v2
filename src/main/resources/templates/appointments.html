@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments – Clinic</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #f0f4f8; min-height: 100vh; }
+        .card { border: none; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .table th { background-color: #f8f9fa; font-weight: 600; border-top: none; }
+        .appt-row:hover { background-color: #f0f7ff; }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a th:href="@{/dashboard}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi bi-arrow-left me-1"></i>Dashboard
+            </a>
+            <a th:href="@{/book}" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i>Book New
+            </a>
+        </div>
+        <h4 class="fw-bold mb-0">
+            <i class="bi bi-journal-medical text-info me-2"></i>My Appointments
+        </h4>
+    </div>
+
+    <!-- Success alert -->
+    <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-check-circle me-2"></i>Appointment booked successfully!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                    <tr>
+                        <th class="ps-4">#</th>
+                        <th>Doctor</th>
+                        <th>Specialization</th>
+                        <th>Date</th>
+                        <th>Time Slot</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="a, stat : ${appointments}" class="appt-row">
+                        <td class="ps-4 text-muted" th:text="${stat.count}"></td>
+                        <td class="fw-semibold">
+                            <i class="bi bi-person-circle text-primary me-2"></i>
+                            <span th:text="${a.doctor.name}"></span>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary bg-opacity-10 text-primary"
+                                  style="font-size:.78rem;padding:5px 12px;border-radius:20px;"
+                                  th:text="${a.doctor.specialization}"></span>
+                        </td>
+                        <td>
+                            <i class="bi bi-calendar3 text-muted me-1"></i>
+                            <span th:text="${a.date}"></span>
+                        </td>
+                        <td>
+                            <i class="bi bi-clock text-muted me-1"></i>
+                            <span th:text="${a.timeSlot.startTime} + ' – ' + ${a.timeSlot.endTime}"></span>
+                        </td>
+                        <td>
+                            <span class="badge bg-success bg-opacity-10 text-success"
+                                  style="font-size:.78rem;padding:5px 12px;border-radius:20px;">
+                                <i class="bi bi-check-circle me-1"></i>Confirmed
+                            </span>
+                        </td>
+                    </tr>
+                    <tr th:if="${appointments.isEmpty()}">
+                        <td colspan="6" class="text-center text-muted py-5">
+                            <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+                            No appointments yet.
+                            <a th:href="@{/book}" class="text-primary ms-1">Book one now →</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

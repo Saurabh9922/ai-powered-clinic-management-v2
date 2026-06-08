@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Doctor – Clinic</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #f0f4f8; min-height: 100vh; }
+        .card { border: none; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .card-header { background: linear-gradient(135deg, #d32f2f, #b71c1c); border-radius: 16px 16px 0 0 !important; }
+        .form-control:focus, .form-select:focus { border-color: #1a73e8; box-shadow: 0 0 0 0.2rem rgba(26,115,232,.25); }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="mb-3">
+                <a th:href="@{/admin/dashboard}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-header text-white text-center py-4">
+                    <i class="bi bi-person-plus fs-1"></i>
+                    <h3 class="mt-2 mb-0 fw-bold">Add New Doctor</h3>
+                    <p class="mb-0 opacity-75">16 time slots (9AM–5PM) are auto-generated</p>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <!-- Error from model (e.g. DB failure) -->
+                    <div th:if="${error}" class="alert alert-danger mb-3">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <span th:text="${error}">Error occurred</span>
+                    </div>
+
+                    <form th:action="@{/admin/save-doctor}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Doctor Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" name="name" class="form-control"
+                                       placeholder="e.g. Dr. Patel" required autofocus minlength="2">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Specialization</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-briefcase-fill"></i></span>
+                                <select name="specialization" class="form-select">
+                                    <option value="General">General</option>
+                                    <option value="Neurologist">Neurologist</option>
+                                    <option value="Endocrinologist">Endocrinologist</option>
+                                    <option value="Cardiologist">Cardiologist</option>
+                                    <option value="Pulmonologist">Pulmonologist</option>
+                                    <option value="Gastroenterologist">Gastroenterologist</option>
+                                    <option value="Dermatologist">Dermatologist</option>
+                                    <option value="Orthopedist">Orthopedist</option>
+                                    <option value="Pediatrician">Pediatrician</option>
+                                    <option value="Psychiatrist">Psychiatrist</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger btn-lg fw-semibold">
+                                <i class="bi bi-save me-2"></i>Save Doctor
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
